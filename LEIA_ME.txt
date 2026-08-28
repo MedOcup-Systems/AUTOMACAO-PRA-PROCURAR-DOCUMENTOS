@@ -1,0 +1,78 @@
+╔══════════════════════════════════════════════════════════════╗
+║              SEPARADOR AUTOMATICO DE ASOs                   ║
+║                     INSTRUCOES                              ║
+╚══════════════════════════════════════════════════════════════╝
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  PRIMEIRA VEZ — INSTALACAO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PASSO 1: Instale o Python (se ainda nao tiver)
+           → https://www.python.org/downloads/
+           → IMPORTANTE: marque "Add Python to PATH" na instalacao
+
+  PASSO 2: Instale o Tesseract OCR
+           → https://github.com/UB-Mannheim/tesseract/wiki
+           → Baixe o .exe de 64 bits e instale normalmente
+
+  PASSO 3: Instale o Poppler
+           → https://github.com/oschwartz10612/poppler-windows/releases
+           → Baixe o .zip, extraia para C:\poppler\
+           → Adicione C:\poppler\Library\bin ao PATH do Windows:
+             Painel de Controle > Sistema > Configuracoes avancadas
+             > Variaveis de Ambiente > Path > Novo
+
+  PASSO 4: Execute o arquivo INSTALAR_E_CONFIGURAR.bat
+           → Instala as bibliotecas Python automaticamente
+           → Cria atalho na area de trabalho
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  USO DO PROGRAMA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  1. Abra o programa (atalho na area de trabalho ou ABRIR_SEPARADOR_ASOs.bat)
+
+  2. Selecione os 3 caminhos:
+     • Planilha de Funcionarios: arquivo .xlsx com nomes e datas
+       Coluna A = Nome do funcionario
+       Coluna B = Data no formato DD/MM (ex: 06/02)
+
+     • Pasta do Mes: pasta do mes no Drive
+       Exemplo: G:\Meu Drive\NOVAMEDICINA.2\2026\2.FEVEREIRO 2026
+       O programa navega automaticamente pelas subpastas de dia
+
+     • Pasta de Saida: onde os ASOs separados serao salvos
+
+  3. Clique em "INICIAR PROCESSAMENTO"
+
+  4. Acompanhe o progresso nas barras e no log
+
+  5. Ao final, um relatorio RELATORIO_ASOs_DD-MM-AAAA.xlsx
+     sera gerado na pasta de saida com:
+     - Aba "Encontrados": ASOs extraidos com sucesso
+     - Aba "Nao Encontrados": nomes nao localizados
+     - Aba "Resumo": totais e taxa de sucesso
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ESTRUTURA DE PASTAS ESPERADA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  2.FEVEREIRO 2026/
+    06.02/
+      scan_001.pdf
+      scan_002.pdf
+    10.02/
+      scan_001.pdf
+    20.02/
+      ...
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  CONTEUDO DA PASTA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  separar_asos_app.py         → programa principal
+  INSTALAR_E_CONFIGURAR.bat   → instalador (execute uma vez)
+  ABRIR_SEPARADOR_ASOs.bat    → abre o programa
+  LEIA_ME.txt                 → este arquivo
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

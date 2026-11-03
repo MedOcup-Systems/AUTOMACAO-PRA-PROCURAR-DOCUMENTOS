@@ -4,3 +4,4 @@ __pycache__/
 dependencias_temp/
 .vscode/
 .idea/
+config_separador.json

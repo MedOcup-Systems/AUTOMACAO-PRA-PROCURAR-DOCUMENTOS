@@ -7,8 +7,7 @@ dependencias do Separador de ASOs sem abrir o CMD.
 
 Instala:
   - Tesseract OCR (4 estrategias em cascata)
-  - Poppler (download direto)
-  - Bibliotecas Python (pip)
+  - Bibliotecas Python (pip, incluindo PyMuPDF)
 
 Execute este arquivo antes de usar o SEPARACAODEASO.py.
 """
@@ -54,7 +53,7 @@ TESSERACT_PATHS = [
 ]
 
 LIBS_PYTHON = [
-    "pdfplumber", "pypdf", "pdf2image",
+    "pdfplumber", "pypdf", "PyMuPDF",
     "pytesseract", "openpyxl", "pillow",
 ]
 
@@ -158,25 +157,6 @@ def tesseract_encontrar():
             if t.exists(): return str(t)
         except Exception:
             pass
-    return None
-
-def poppler_encontrar():
-    """Retorna pasta bin do Poppler ou None."""
-    exe = shutil.which("pdftoppm") or shutil.which("pdftoppm.exe")
-    if exe: return os.path.dirname(exe)
-    locais = [
-        r"C:\ProgramData\chocolatey\lib\poppler\tools\Library\bin",
-        r"C:\ProgramData\chocolatey\bin",
-        r"C:\poppler\bin",
-        os.path.join(os.environ.get("LOCALAPPDATA",""), "poppler", "bin"),
-    ]
-    for loc in locais:
-        if os.path.isfile(os.path.join(loc, "pdftoppm.exe")): return loc
-    # Busca generica em C:\poppler
-    base = Path(r"C:\poppler")
-    if base.exists():
-        for p in base.rglob("pdftoppm.exe"):
-            return str(p.parent)
     return None
 
 
@@ -316,50 +296,6 @@ class InstaladorLogica:
         if pasta not in os.environ.get("PATH", ""):
             os.environ["PATH"] = pasta + os.pathsep + os.environ.get("PATH", "")
 
-    # ── Poppler ──────────────────────────────────────────────
-
-    def instalar_poppler(self):
-        self.log("━━ Verificando Poppler...", "titulo")
-        bin_dir = poppler_encontrar()
-        if bin_dir:
-            self.log(f"✔ Poppler ja instalado: {bin_dir}", "ok")
-            self.status("poppler", "ok")
-            return True
-
-        self.log("Poppler nao encontrado. Baixando...", "aviso")
-        destino_zip = Path(r"C:\poppler\poppler.zip")
-        destino_zip.parent.mkdir(parents=True, exist_ok=True)
-
-        def prog_popp(p):
-            self.prog(p * 0.85, f"Baixando Poppler... {int(p*100)}%")
-
-        ok_dl = baixar_arquivo(POPPLER_URL, destino_zip, prog_popp)
-        if not ok_dl or not destino_zip.exists():
-            self.log("✖ Download do Poppler falhou.", "erro")
-            self.status("poppler", "erro")
-            return False
-
-        self.prog(0.9, "Extraindo Poppler...")
-        self.log("Extraindo Poppler...", "info")
-        code, _, err = run_cmd([
-            "powershell", "-NoProfile", "-ExecutionPolicy", "Bypass",
-            "-Command",
-            f"Expand-Archive -Path '{destino_zip}' -DestinationPath 'C:\\poppler\\' -Force"
-        ], timeout=120)
-        try: destino_zip.unlink()
-        except: pass
-
-        bin_dir = poppler_encontrar()
-        if bin_dir:
-            self.log(f"✔ Poppler instalado: {bin_dir}", "ok")
-            self.status("poppler", "ok")
-            adicionar_path_permanente(bin_dir)
-            return True
-
-        self.log("✖ Poppler nao encontrado apos extracao.", "erro")
-        self.status("poppler", "erro")
-        return False
-
     # ── Bibliotecas Python ───────────────────────────────────
 
     def instalar_libs(self):
@@ -418,9 +354,8 @@ class InstaladorLogica:
         self.prog(0.75, "Tesseract concluido.")
         self.log("", "")
 
-        # Poppler
-        self.prog(0.80, "Verificando Poppler...")
-        resultados["poppler"] = self.instalar_poppler()
+        self.log("", "")
+
         self.prog(1.0, "Concluido!")
         self.log("", "")
 
@@ -486,8 +421,7 @@ class Launcher(tk.Tk):
 
         self.status_labels = {}
         for nome, rotulo in [("libs", "Bibliotecas Python"),
-                               ("tesseract", "Tesseract OCR"),
-                               ("poppler", "Poppler")]:
+                               ("tesseract", "Tesseract OCR")]:
             card = tk.Frame(cards, bg=COR_PAINEL, padx=14, pady=10,
                             highlightthickness=1, highlightbackground=COR_BORDA)
             card.pack(side="left", fill="x", expand=True, padx=(0, 8))
@@ -663,13 +597,10 @@ class Launcher(tk.Tk):
             self._emit(tipo="status", nome="tesseract",
                        ok="ok" if exe else "erro")
 
-            # Poppler
-            bin_dir = poppler_encontrar()
-            self._emit(tipo="status", nome="poppler",
-                       ok="ok" if bin_dir else "erro")
-
+            # Poppler removido
+            
             # Habilita botao abrir se tudo ok
-            if not faltando and exe and bin_dir:
+            if not faltando and exe:
                 self.fila.put({"tipo": "fim", "sucesso": True})
                 self._emit(tipo="log",
                            texto="Todas as dependencias ja estao instaladas!",
@@ -681,8 +612,6 @@ class Launcher(tk.Tk):
                                texto=f"Faltam libs: {', '.join(faltando)}", tag="aviso")
                 if not exe:
                     self._emit(tipo="log", texto="Tesseract nao encontrado.", tag="aviso")
-                if not bin_dir:
-                    self._emit(tipo="log", texto="Poppler nao encontrado.", tag="aviso")
                 self._emit(tipo="log",
                            texto="Clique em 'INSTALAR TUDO' para instalar automaticamente.",
                            tag="info")

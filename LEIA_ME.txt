@@ -15,16 +15,9 @@
            → https://github.com/UB-Mannheim/tesseract/wiki
            → Baixe o .exe de 64 bits e instale normalmente
 
-  PASSO 3: Instale o Poppler
-           → https://github.com/oschwartz10612/poppler-windows/releases
-           → Baixe o .zip, extraia para C:\poppler\
-           → Adicione C:\poppler\Library\bin ao PATH do Windows:
-             Painel de Controle > Sistema > Configuracoes avancadas
-             > Variaveis de Ambiente > Path > Novo
-
-  PASSO 4: Execute o arquivo INSTALAR_E_CONFIGURAR.bat
-           → Instala as bibliotecas Python automaticamente
-           → Cria atalho na area de trabalho
+  PASSO 3: Execute o arquivo INSTALAR_DEPENDENCIAS.py
+           → Instala as bibliotecas Python (como PyMuPDF) automaticamente
+           → Substitui arquivos .bat antigos.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   USO DO PROGRAMA
@@ -45,11 +38,20 @@
 
   3. Clique em "INICIAR PROCESSAMENTO"
 
-  4. Acompanhe o progresso nas barras e no log
+  4. NOVO RECURSO — CHECKPOINT E RETOMADA AUTOMATICA:
+     • O sistema salva o progresso a cada ASO encontrado no arquivo:
+       checkpoint_progresso.json (na pasta de saida).
+     • Se o computador desligar, travar ou o programa for fechado,
+       ao rodar novamente selecionando a mesma pasta de saida,
+       o sistema perguntara se deseja CONTINUAR DE ONDE PAROU.
+     • Ele reaproveitara todos os ASOs ja encontrados e continuara
+       a busca apenas para os funcionarios restantes!
 
-  5. Ao final, um relatorio RELATORIO_ASOs_DD-MM-AAAA.xlsx
+  5. Acompanhe o progresso nas barras e no log
+
+  6. Ao final, um relatorio RELATORIO_ASOs_DD-MM-AAAA.xlsx
      sera gerado na pasta de saida com:
-     - Aba "Encontrados": ASOs extraidos com sucesso
+     - Aba "Encontrados": ASOs extraidos (identificando se vieram do checkpoint)
      - Aba "Nao Encontrados": nomes nao localizados
      - Aba "Resumo": totais e taxa de sucesso
 
